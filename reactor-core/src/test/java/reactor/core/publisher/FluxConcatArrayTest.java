@@ -26,6 +26,7 @@ import org.reactivestreams.Subscription;
 import reactor.core.Scannable;
 import reactor.test.StepVerifier;
 import reactor.test.subscriber.AssertSubscriber;
+import reactor.util.context.Context;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
@@ -238,7 +239,9 @@ public class FluxConcatArrayTest {
 	@Test
 	public void scanDelayErrorSubscriber() {
 		Subscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
-		FluxConcatArray.ConcatArrayDelayErrorSubscriber<String> test = new FluxConcatArray.ConcatArrayDelayErrorSubscriber<>(actual, new Publisher[0]);
+		FluxConcatArray.ConcatArrayDelayErrorSubscriber<String> test = new
+				FluxConcatArray.ConcatArrayDelayErrorSubscriber<>(actual, new
+				Publisher[0], Context.empty());
 		Subscription parent = Operators.emptySubscription();
 		test.onSubscribe(parent);
 
