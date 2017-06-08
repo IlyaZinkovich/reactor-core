@@ -214,14 +214,4 @@ public abstract class FluxProcessor<IN, OUT> extends Flux<OUT>
 		}
 		return new FluxCreate.SerializedSink<>(s);
 	}
-
-	/**
-	 * Note: From 3.1 this is to be left unimplemented
-	 */
-	@Override
-	public void subscribe(Subscriber<? super OUT> s) {
-		if (s == null) {
-			throw Exceptions.argumentIsNullException();
-		}
-	}
 }
