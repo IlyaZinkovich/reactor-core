@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import javax.annotation.Nullable;
 
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -32,7 +33,7 @@ import reactor.core.Scannable;
 import reactor.util.Logger;
 import reactor.util.Loggers;
 import reactor.util.context.Context;
-import javax.annotation.Nullable;
+import reactor.util.context.ContextRelay;
 
 /**
  * An helper to support "Operator" writing, handle noop subscriptions, validate request
@@ -166,7 +167,17 @@ public abstract class Operators {
 			return (ContextualPublisher<T>) source;
 		}
 		Objects.requireNonNull(source, "source");
-		return (s, ctx) -> source.subscribe(s);
+		return new ContextualPublisher<T>() {
+			@Override
+			public void subscribe(Subscriber<? super T> actual, Context context) {
+				source.subscribe(actual);
+			}
+
+			@Override
+			public void subscribe(Subscriber<? super T> s) {
+				source.subscribe(s);
+			}
+		};
 	}
 
 	/**
@@ -400,6 +411,26 @@ public abstract class Operators {
 			return Exceptions.propagate(Operators.onOperatorError(subscription, ree, dataSignal));
 		}
 		return Exceptions.propagate(Operators.onOperatorError(subscription, ree));
+	}
+
+	/**
+	 * Apply {@link Hooks#onSubscriber(BiFunction)} hook to the passed
+	 * {@link Subscriber} and return eventually transformed subscriber.
+	 *
+	 * @param actual the {@link Subscriber} to apply hook on
+	 * @param <T> passed subscriber type
+	 *
+	 * @return an eventually transformed {@link Subscriber}
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> Subscriber<? super T> onSubscriber(Subscriber<? super T> actual) {
+		BiFunction<? super Subscriber<?>, ? super Context, ? extends Subscriber<?>> hook =
+				Hooks.onSubscriberHook;
+		if (hook != null) {
+			return (Subscriber<? super T>) hook.apply(actual,
+					ContextRelay.getOrEmpty(actual));
+		}
+		return actual;
 	}
 
 	/**

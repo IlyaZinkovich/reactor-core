@@ -2847,14 +2847,8 @@ public abstract class Mono<T> implements ContextualPublisher<T> {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public final void subscribe(Subscriber<? super T> actual) {
-		BiFunction<? super Subscriber<?>, ? super Context, ? extends Subscriber<?>> hook =
-				Hooks.onSubscriberHook;
-		if (hook != null) {
-			actual = (Subscriber<? super T>)hook.apply(actual, ContextRelay.getOrEmpty(actual));
-		}
-
+		actual = Operators.onSubscriber(actual);
 		subscribe(actual, ContextRelay.getOrEmpty(actual));
 	}
 

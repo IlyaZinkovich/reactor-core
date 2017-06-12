@@ -1024,13 +1024,7 @@ public abstract class ParallelFlux<T> implements ContextualPublisher<T> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public final void subscribe(Subscriber<? super T> s) {
-		BiFunction<? super Subscriber<?>, ? super Context, ? extends Subscriber<?>>
-				hook = Hooks.onSubscriberHook;
-
-		if (hook != null) {
-			s = (Subscriber<? super T>)hook.apply(s, ContextRelay.getOrEmpty(s));
-		}
-
+		s = Operators.onSubscriber(s);
 		subscribe(s, ContextRelay.getOrEmpty(s));
 	}
 
