@@ -15,12 +15,9 @@
  */
 package reactor.core.publisher;
 
-import java.util.function.BiFunction;
-
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import reactor.util.context.Context;
-import reactor.util.context.ContextRelay;
 
 /**
  *
@@ -32,7 +29,6 @@ import reactor.util.context.ContextRelay;
  *
  * @author Stephane Maldini
  */
-@FunctionalInterface
 public interface ContextualPublisher<T> extends Publisher<T> {
 
 	/**
@@ -48,16 +44,4 @@ public interface ContextualPublisher<T> extends Publisher<T> {
 	 * @see Publisher#subscribe(Subscriber)
 	 */
 	void subscribe(Subscriber<? super T> actual, Context context);
-
-	@Override
-	@SuppressWarnings("unchecked")
-	default void subscribe(Subscriber<? super T> s) {
-		BiFunction<? super Subscriber<?>, ? super Context, ? extends Subscriber<?>> hook =
-				Hooks.onSubscriberHook;
-		if (hook != null) {
-			s = (Subscriber<? super T>)hook.apply(s, ContextRelay.getOrEmpty(s));
-		}
-
-		subscribe(s, ContextRelay.getOrEmpty(s));
-	}
 }

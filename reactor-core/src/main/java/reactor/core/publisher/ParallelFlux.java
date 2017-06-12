@@ -39,6 +39,8 @@ import reactor.core.scheduler.Scheduler;
 import reactor.util.Logger;
 import reactor.util.concurrent.QueueSupplier;
 import reactor.util.context.Context;
+import reactor.util.context.ContextRelay;
+
 import javax.annotation.Nullable;
 
 /**
@@ -1020,8 +1022,16 @@ public abstract class ParallelFlux<T> implements ContextualPublisher<T> {
 	 * @param s the subscriber to use on {@link #sequential()} Flux
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	public final void subscribe(Subscriber<? super T> s) {
-		sequential().subscribe(new FluxHide.SuppressFuseableSubscriber<>(s));
+		BiFunction<? super Subscriber<?>, ? super Context, ? extends Subscriber<?>>
+				hook = Hooks.onSubscriberHook;
+
+		if (hook != null) {
+			s = (Subscriber<? super T>)hook.apply(s, ContextRelay.getOrEmpty(s));
+		}
+
+		subscribe(s, ContextRelay.getOrEmpty(s));
 	}
 
 	/**

@@ -60,6 +60,7 @@ import reactor.core.scheduler.Schedulers;
 import reactor.util.Logger;
 import reactor.util.concurrent.QueueSupplier;
 import reactor.util.context.Context;
+import reactor.util.context.ContextRelay;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuple3;
 import reactor.util.function.Tuple4;
@@ -6215,9 +6216,15 @@ public abstract class Flux<T> implements ContextualPublisher<T> {
 	}
 
 	@Override
-	public void subscribe(Subscriber<? super T> actual, Context context) {
-		throw new UnsupportedOperationException("#subscribe(Subscriber) or #subscribe" +
-				"(Subscriber, Context) must be implemented by the enclosing Flux");
+	@SuppressWarnings("unchecked")
+	public final void subscribe(Subscriber<? super T> actual) {
+		BiFunction<? super Subscriber<?>, ? super Context, ? extends Subscriber<?>> hook =
+				Hooks.onSubscriberHook;
+		if (hook != null) {
+			actual = (Subscriber<? super T>)hook.apply(actual, ContextRelay.getOrEmpty(actual));
+		}
+
+		subscribe(actual, ContextRelay.getOrEmpty(actual));
 	}
 
 	/**
