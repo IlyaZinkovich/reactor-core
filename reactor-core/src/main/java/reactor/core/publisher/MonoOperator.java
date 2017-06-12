@@ -26,7 +26,7 @@ import reactor.core.Scannable;
 /**
  * A decorating {@link Mono} {@link Publisher} that exposes {@link Mono} API over an
  * arbitrary {@link Publisher} Useful to create operators which return a {@link Mono},
- * e.g. : {@code flux.as(f -> MonoSource.wrap(f)) .then(d -> Mono.delay(Duration.ofSeconds(1))
+ * e.g. : {@code flux.as(Mono::fromDirect).then(d -> Mono.delay(Duration.ofSeconds(1))
  * .block(); }
  *
  * @param <I> delegate {@link Publisher} type

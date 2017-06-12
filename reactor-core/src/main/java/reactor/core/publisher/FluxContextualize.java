@@ -172,6 +172,7 @@ final class FluxContextualize<T> extends FluxOperator<T, T> implements Fuseable 
 		}
 
 		@Override
+		@Nullable
 		public T poll() {
 			if (qs != null) {
 				return qs.poll();

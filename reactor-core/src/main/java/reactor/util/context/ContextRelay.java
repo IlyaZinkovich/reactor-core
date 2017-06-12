@@ -21,7 +21,7 @@ package reactor.util.context;
  * into dependent components such as a chain of operators.
  *
  * @author Stephane Maldini
- * @since 3.0.6
+ * @since 3.1.0
  */
 public interface ContextRelay {
 

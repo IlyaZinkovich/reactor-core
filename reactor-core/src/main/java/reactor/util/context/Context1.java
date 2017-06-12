@@ -16,6 +16,7 @@
 package reactor.util.context;
 
 import java.util.Objects;
+import javax.annotation.Nullable;
 
 final class Context1 implements Context {
 
@@ -28,11 +29,17 @@ final class Context1 implements Context {
 	}
 
 	@Override
-	public Context put(Object key, Object value) {
+	public Context put(Object key, @Nullable Object value) {
 		Objects.requireNonNull(key, "key");
 
 		if(this.key.equals(key)){
+			if (value == null) {
+				return Context.empty();
+			}
 			return new Context1(key, value);
+		}
+		if (value == null) {
+			return this;
 		}
 
 		return new ContextN(this.key, this.value, key, value);

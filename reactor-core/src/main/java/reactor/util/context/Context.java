@@ -16,6 +16,8 @@
 
 package reactor.util.context;
 
+import javax.annotation.Nullable;
+
 /**
  * A key/value store that is propagated between components such as operators via the
  *  context protocol. Contexts are ideal to transport orthogonal
@@ -53,7 +55,7 @@ public interface Context {
 	 *
 	 * @return a new {@link Context} including the user-provided key/value
 	 */
-	Context put(Object key, Object value);
+	Context put(Object key, @Nullable Object value);
 
 	/**
 	 * Resolve a value given a key within the {@link Context}.
@@ -64,6 +66,7 @@ public interface Context {
 	 *
 	 * @return the eventual value resolved by this key or null
 	 */
+	@Nullable
 	<T> T get(Object key);
 
 	/**
@@ -75,6 +78,7 @@ public interface Context {
 	 *
 	 * @return the eventual value resolved by this type key or null
 	 */
+	@Nullable
 	default <T> T get(Class<T> key){
 		T v = get((Object)key);
 		if(key.isInstance(key)){
@@ -92,7 +96,8 @@ public interface Context {
 	 *
 	 * @return an eventual value or the default passed
 	 */
-	default <T> T getOrDefault(Object key, T defaultValue){
+	@Nullable
+	default <T> T getOrDefault(Object key, @Nullable T defaultValue){
 		T v = get(key);
 		if(v == null){
 			return defaultValue;

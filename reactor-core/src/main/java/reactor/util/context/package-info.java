@@ -13,27 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/**
+ * Miscellaneous utility classes, such as loggers, tuples or queue suppliers and implementations.
+ */
+@NonNullApi
 package reactor.util.context;
 
-import java.util.Objects;
-import javax.annotation.Nullable;
-
-final class Context0 implements Context {
-
-	static final Context0 INSTANCE = new Context0();
-
-	@Override
-	public Context put(Object key, @Nullable Object value) {
-		Objects.requireNonNull(key, "key");
-		if(value == null){
-			return this;
-		}
-		return new Context1(key, value);
-	}
-
-	@Override
-	@Nullable
-	public <T> T get(Object key) {
-		return null;
-	}
-}
+import reactor.util.lang.NonNullApi;

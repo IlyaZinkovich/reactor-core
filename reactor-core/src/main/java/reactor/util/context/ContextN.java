@@ -18,6 +18,7 @@ package reactor.util.context;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import javax.annotation.Nullable;
 
 @SuppressWarnings("unchecked")
 final class ContextN extends HashMap<Object, Object>
@@ -29,25 +30,27 @@ final class ContextN extends HashMap<Object, Object>
 		super.put(key2, value2);
 	}
 
-	ContextN(Map<Object, Object> map, Object key, Object value) {
+	ContextN(Map<Object, Object> map, Object key, @Nullable Object value) {
 		super(map.size() + 1, 1f);
 		putAll(map);
 		super.put(key, value);
 	}
 
 	@Override
-	public Context put(Object key, Object value) {
+	public Context put(Object key, @Nullable Object value) {
 		Objects.requireNonNull(key, "key");
 		return new ContextN(this, key, value);
 	}
 
 	@Override
+	@Nullable
 	public Object get(Object key) {
 		return super.get(key);
 	}
 
 	@Override
-	public Object getOrDefault(Object key, Object defaultValue) {
+	@Nullable
+	public Object getOrDefault(Object key, @Nullable Object defaultValue) {
 		Object v = get(key);
 		if(v == null){
 			return defaultValue;

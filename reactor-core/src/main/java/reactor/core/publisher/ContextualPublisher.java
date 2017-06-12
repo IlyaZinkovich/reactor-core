@@ -39,8 +39,8 @@ public interface ContextualPublisher<T> extends Publisher<T> {
 	 * An internal {@link Publisher#subscribe(Subscriber)} implemented by
 	 * both reactive sources {@link Flux} and {@link Mono}.
 	 * <p>
-	 *     In addition to behave as expected by {@link Publisher#subscribe(Subscriber)}
-	 *     in a controlled manner, it supports {@link Context} passing.
+	 * In addition to behave as expected by {@link Publisher#subscribe(Subscriber)}
+	 * in a controlled manner, it supports {@link Context} passing.
 	 *
 	 * @param actual the {@link Subscriber} interested into the published sequence
 	 * @param context a {@link Context} to provide to the operational chain.
