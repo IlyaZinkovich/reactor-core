@@ -1100,7 +1100,7 @@ public abstract class Mono<T> implements ContextualPublisher<T> {
 	 */
 	@SafeVarargs
 	public static <T, V> Mono<V> zip(Function<? super Object[], ? extends V> combinator, Mono<? extends T>... monos) {
-		return MonoSource.wrap(new FluxZip<>(monos, combinator, QueueSupplier.one(), 1));
+		return fromDirect(new FluxZip<>(monos, combinator, QueueSupplier.one(), 1));
 	}
 
 	/**
@@ -1122,7 +1122,7 @@ public abstract class Mono<T> implements ContextualPublisher<T> {
 	 */
 	public static <T, V> Mono<V> zip(final Iterable<?extends Mono<? extends T>> monos,
 			final Function<? super Object[], ? extends V> combinator) {
-		return MonoSource.wrap(new FluxZip<>(monos, combinator, QueueSupplier.<T>one(), 1));
+		return fromDirect(new FluxZip<>(monos, combinator, QueueSupplier.<T>one(), 1));
 	}
 
 	/**
@@ -2454,7 +2454,7 @@ public abstract class Mono<T> implements ContextualPublisher<T> {
 	 */
 	public final <R> Mono<R> publish(Function<? super Mono<T>, ? extends Mono<? extends
 			R>> transform) {
-		return MonoSource.wrap(new FluxPublishMulticast<>(this, f -> transform.apply(from(f)),
+		return fromDirect(new FluxPublishMulticast<>(this, f -> transform.apply(from(f)),
 				Integer
 				.MAX_VALUE,
 				QueueSupplier
@@ -3062,9 +3062,11 @@ public abstract class Mono<T> implements ContextualPublisher<T> {
 	 * sequence
 	 */
 	public final Mono<Void> thenEmpty(Publisher<Void> other) {
-		MonoIgnoreEmpty<T> ignored = new MonoIgnoreEmpty<>(this);
-		Mono<Void> then = ignored.then(MonoSource.wrap(other));
-		return Mono.onAssembly(then);
+		if (this instanceof MonoThenIgnore) {
+			MonoThenIgnore<T> a = (MonoThenIgnore<T>) this;
+			return a.shift(fromDirect(other));
+		}
+		return onAssembly(new MonoThenIgnore<>(new Publisher[] { this }, fromDirect(other)));
 	}
 
 	/**

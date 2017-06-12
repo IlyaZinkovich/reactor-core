@@ -248,7 +248,7 @@ public class MonoDelayElementTest {
 		AtomicReference<Object> dropped = new AtomicReference<>();
 		Hooks.onNextDropped(dropped::set);
 
-		Mono<String> source = MonoSource.wrap(s -> {
+		Mono<String> source = Mono.fromDirect(s -> {
 			s.onSubscribe(Operators.emptySubscription());
 			s.onNext("foo");
 			s.onNext("bar");
@@ -273,7 +273,7 @@ public class MonoDelayElementTest {
 
 	@Test
 	public void guardedAgainstOnComplete() {
-		Mono<String> source = MonoSource.wrap(s -> {
+		Mono<String> source = Mono.fromDirect(s -> {
 			s.onSubscribe(Operators.emptySubscription());
 			s.onNext("foo");
 			s.onComplete();
@@ -294,7 +294,7 @@ public class MonoDelayElementTest {
 		AtomicReference<Throwable> dropped = new AtomicReference<>();
 		Hooks.onErrorDropped(dropped::set);
 
-		Mono<String> source = MonoSource.wrap(s -> {
+		Mono<String> source = Mono.fromDirect(s -> {
 			s.onSubscribe(Operators.emptySubscription());
 			s.onNext("foo");
 			s.onError(new IllegalStateException("boom"));

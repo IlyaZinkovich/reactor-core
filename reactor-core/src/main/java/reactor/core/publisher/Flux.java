@@ -6502,7 +6502,7 @@ public abstract class Flux<T> implements ContextualPublisher<T> {
 	 * sequence
 	 */
 	public final Mono<Void> thenEmpty(Publisher<Void> other) {
-		return new MonoIgnoreEmpty<>(this).then(MonoSource.wrap(other));
+		return new MonoIgnoreEmpty<>(this).then(Mono.fromDirect(other));
 	}
 
 	/**

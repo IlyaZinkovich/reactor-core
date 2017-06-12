@@ -25,7 +25,6 @@ import java.util.function.IntFunction;
 import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.publisher.MonoSource;
 import reactor.test.StepVerifier;
 
 /**
@@ -243,7 +242,7 @@ public abstract class MonoOperatorTest<I, O>
 
 	@Override
 	protected Mono<I> withFluxSource(Flux<I> input) {
-		return MonoSource.wrap(input);
+		return Mono.fromDirect(input);
 	}
 
 	@Override
