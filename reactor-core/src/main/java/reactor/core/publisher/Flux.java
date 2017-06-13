@@ -4793,9 +4793,7 @@ public abstract class Flux<T> implements ContextualPublisher<T> {
 	 * overflow strategy
 	 */
 	public final Flux<T> onBackpressureBuffer(Duration ttl, int maxSize, Consumer<? super T> onBufferEviction) {
-		Objects.requireNonNull(ttl, "ttl");
-		Objects.requireNonNull(onBufferEviction, "onBufferEviction");
-		return onAssembly(new FluxOnBackpressureBufferTimeout<>(this, ttl, Schedulers.elastic(), maxSize, onBufferEviction));
+		return onBackpressureBuffer(ttl, maxSize, onBufferEviction, Schedulers.parallel());
 	}
 
 	/**

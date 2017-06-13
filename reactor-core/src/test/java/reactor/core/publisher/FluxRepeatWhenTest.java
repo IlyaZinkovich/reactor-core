@@ -404,7 +404,7 @@ public class FluxRepeatWhenTest {
 		Subscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		Subscriber<Long> signaller = new LambdaSubscriber<>(null, e -> {}, null, null);
 		Flux<Integer> when = Flux.empty();
-		FluxRepeatWhen.RepeatWhenMainSubscriber<Integer> main = new FluxRepeatWhen.RepeatWhenMainSubscriber<>(actual, signaller, when);
+		FluxRepeatWhen.RepeatWhenMainSubscriber<Integer> main = new FluxRepeatWhen.RepeatWhenMainSubscriber<>(actual, signaller, when, Context.empty());
 
 		List<Scannable> inners = main.inners().collect(Collectors.toList());
 
